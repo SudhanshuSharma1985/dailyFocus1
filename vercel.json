@@ -1,8 +1,9 @@
 {
   "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
   "rewrites": [
-    { "source": "/api/login", "destination": "/api/login" },
-    { "source": "/api/coach", "destination": "/api/coach" },
-    { "source": "/(.*)", "destination": "/$1" }
+    { "source": "/api/login", "destination": "/api/login.js" },
+    { "source": "/api/coach", "destination": "/api/coach.js" }
   ]
 }
