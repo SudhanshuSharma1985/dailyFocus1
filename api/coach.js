@@ -2,13 +2,29 @@ const https = require("https");
 
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o";
 
+async function parseBody(req) {
+  if (req.body !== undefined) return req.body;
+  let raw = "";
+  for await (const chunk of req) {
+    raw += chunk;
+    if (raw.length > 1_000_000) throw new Error("Request body too large.");
+  }
+  return raw ? JSON.parse(raw) : {};
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).json({ ok: false, error: "Method not allowed." });
     return;
   }
 
-  const payload = req.body;
+  let payload;
+  try {
+    payload = await parseBody(req);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: "Invalid request body." });
+    return;
+  }
 
   if (!payload || typeof payload !== "object") {
     res.status(400).json({ ok: false, error: "Missing coaching payload." });
